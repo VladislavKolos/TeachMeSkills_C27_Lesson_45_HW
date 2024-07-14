@@ -41,15 +41,13 @@ public class AmountTransferService {
 
         BigDecimal finalBalance = null;
 
-        String sqlQuery1 = "SELECT balance FROM account WHERE id = (SELECT account_id FROM card WHERE card_number = ?)";
-        String sqlQuery2 = "UPDATE account SET balance = balance - ? WHERE id = (SELECT account_id FROM card  WHERE card_number = ?)";
-        String sqlQuery3 = "UPDATE account SET balance = balance + ? WHERE id = (SELECT account_id FROM card WHERE card_number = ?)";
-        String sqlQuery4 = "SELECT balance FROM account WHERE id = (SELECT account_id FROM card WHERE card_number = ?)";
+        String sqlQuerySelectBalance = "SELECT balance FROM account WHERE id = (SELECT account_id FROM card WHERE card_number = ?)";
+        String sqlQueryUpdateAccount = "UPDATE account SET balance = balance - ? WHERE id = (SELECT account_id FROM card  WHERE card_number = ?)";
 
         try {
             if (genericValidator.isCardExistsByCardNumber(fromCardNumber)
                     && genericValidator.isCardExistsByCardNumber(toCardNumber)) {
-                preparedStatement1 = connection.prepareStatement(sqlQuery1);
+                preparedStatement1 = connection.prepareStatement(sqlQuerySelectBalance);
                 preparedStatement1.setString(1, fromCardNumber);
 
                 resultSet = preparedStatement1.executeQuery();
@@ -60,17 +58,17 @@ public class AmountTransferService {
                         throw new SQLException("Insufficient funds");
                     }
 
-                    preparedStatement2 = connection.prepareStatement(sqlQuery2);
+                    preparedStatement2 = connection.prepareStatement(sqlQueryUpdateAccount);
                     preparedStatement2.setBigDecimal(1, amount);
                     preparedStatement2.setString(2, fromCardNumber);
                     preparedStatement2.executeUpdate();
 
-                    preparedStatement3 = connection.prepareStatement(sqlQuery3);
+                    preparedStatement3 = connection.prepareStatement(sqlQueryUpdateAccount);
                     preparedStatement3.setBigDecimal(1, amount);
                     preparedStatement3.setString(2, toCardNumber);
                     preparedStatement3.executeUpdate();
                 }
-                preparedStatement4 = connection.prepareStatement(sqlQuery4);
+                preparedStatement4 = connection.prepareStatement(sqlQuerySelectBalance);
                 preparedStatement4.setString(1, fromCardNumber);
 
                 finalResultSet = preparedStatement4.executeQuery();

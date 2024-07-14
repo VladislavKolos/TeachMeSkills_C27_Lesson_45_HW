@@ -38,11 +38,11 @@ public class CardService {
 
         Card card = null;
 
-        String sqlQuery = "SELECT * FROM card WHERE id = ?";
+        String sqlQuerySelectCard = "SELECT * FROM card WHERE id = ?";
 
         try {
             if (genericValidator.isCardExistsByID(id)) {
-                preparedStatement = connection.prepareStatement(sqlQuery);
+                preparedStatement = connection.prepareStatement(sqlQuerySelectCard);
                 preparedStatement.setInt(1, id);
 
                 resultSet = preparedStatement.executeQuery();

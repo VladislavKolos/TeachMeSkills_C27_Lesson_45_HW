@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.TransferDTO;
 import org.example.service.AmountTransferService;
@@ -23,7 +24,7 @@ public class TransferController {
     private final AmountTransferService amountTransferService;
 
     @PostMapping
-    public ResponseEntity<String> transferAmount(@RequestBody TransferDTO transferDTO) throws SQLException {
+    public ResponseEntity<String> transferAmount(@Valid @RequestBody TransferDTO transferDTO) throws SQLException {
         BigDecimal remainingBalance = amountTransferService.transferAmount(
                 transferDTO.getFromCardNumber(),
                 transferDTO.getToCardNumber(),

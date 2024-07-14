@@ -36,11 +36,11 @@ public class ClientService {
 
         Client client = null;
 
-        String sqlQuery = "SELECT * FROM client WHERE id = ?";
+        String sqlQuerySelectClient = "SELECT * FROM client WHERE id = ?";
 
         try {
             if (genericValidator.isClientExists(id)) {
-                preparedStatement = connection.prepareStatement(sqlQuery);
+                preparedStatement = connection.prepareStatement(sqlQuerySelectClient);
                 preparedStatement.setInt(1, id);
 
                 resultSet = preparedStatement.executeQuery();

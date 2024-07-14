@@ -24,9 +24,9 @@ public class GenericValidator {
      * @throws SQLException if an error occurred while executing an SQL-query
      */
     public boolean isClientExists(int id) throws SQLException {
-        String sqlQuery = "SELECT COUNT(*) FROM client WHERE id = ?";
+        String sqlQuerySelectCountClient = "SELECT COUNT(*) FROM client WHERE id = ?";
 
-        return isIDExists(sqlQuery, id);
+        return isIDExists(sqlQuerySelectCountClient, id);
     }
 
     /**
@@ -36,9 +36,9 @@ public class GenericValidator {
      * @throws SQLException if an error occurred while executing an SQL-query
      */
     public boolean isCardExistsByID(int id) throws SQLException {
-        String sqlQuery = "SELECT COUNT(*) FROM card WHERE id = ?";
+        String sqlQuerySelectCountCard = "SELECT COUNT(*) FROM card WHERE id = ?";
 
-        return isIDExists(sqlQuery, id);
+        return isIDExists(sqlQuerySelectCountCard, id);
     }
 
     /**
@@ -48,9 +48,9 @@ public class GenericValidator {
      * @throws SQLException if an error occurred while executing an SQL-query
      */
     public boolean isAccountExists(int id) throws SQLException {
-        String sqlQuery = "SELECT COUNT(*) FROM account WHERE id = ?";
+        String sqlQuerySelectCountAccount = "SELECT COUNT(*) FROM account WHERE id = ?";
 
-        return isIDExists(sqlQuery, id);
+        return isIDExists(sqlQuerySelectCountAccount, id);
     }
 
     /**
@@ -60,9 +60,9 @@ public class GenericValidator {
      * @throws SQLException if an error occurred while executing an SQL-query
      */
     public boolean isCardExistsByCardNumber(String cardNumber) throws SQLException {
-        String sqlQuery = "SELECT COUNT(*) FROM card WHERE card_number = ?";
+        String sqlQuerySelectCountCard = "SELECT COUNT(*) FROM card WHERE card_number = ?";
 
-        return isCardNumberExists(sqlQuery, cardNumber);
+        return isCardNumberExists(sqlQuerySelectCountCard, cardNumber);
     }
 
     /**
