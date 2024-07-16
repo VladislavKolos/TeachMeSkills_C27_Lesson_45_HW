@@ -2,7 +2,7 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.util.PostgresUtil;
-import org.example.vlidator.GenericValidator;
+import org.example.vlidator.ModelValidator;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,17 +18,18 @@ import java.sql.SQLException;
 @RequiredArgsConstructor
 public class AmountTransferService {
     private final PostgresUtil postgresUtil;
-    private final GenericValidator genericValidator;
+    private final ModelValidator genericValidator;
 
     /**
      * Transfers the specified amount from one card to another.
+     *
      * @param fromCardNumber sender's card number
-     * @param toCardNumber recipient's card number
-     * @param amount transfer amount
+     * @param toCardNumber   recipient's card number
+     * @param amount         transfer amount
      * @return final balance of the sender's card after the transfer
      * @throws SQLException if an error occurred while executing an SQL-query
      */
-    public BigDecimal transferAmount(String fromCardNumber, String toCardNumber, BigDecimal amount) throws SQLException {
+    public BigDecimal transferAmount(long fromCardNumber, long toCardNumber, BigDecimal amount) throws SQLException {
         Connection connection = postgresUtil.getConnection();
         connection.setAutoCommit(false);
 
@@ -48,7 +49,7 @@ public class AmountTransferService {
             if (genericValidator.isCardExistsByCardNumber(fromCardNumber)
                     && genericValidator.isCardExistsByCardNumber(toCardNumber)) {
                 preparedStatement1 = connection.prepareStatement(sqlQuerySelectBalance);
-                preparedStatement1.setString(1, fromCardNumber);
+                preparedStatement1.setLong(1, fromCardNumber);
 
                 resultSet = preparedStatement1.executeQuery();
 
@@ -60,16 +61,16 @@ public class AmountTransferService {
 
                     preparedStatement2 = connection.prepareStatement(sqlQueryUpdateAccount);
                     preparedStatement2.setBigDecimal(1, amount);
-                    preparedStatement2.setString(2, fromCardNumber);
+                    preparedStatement2.setLong(2, fromCardNumber);
                     preparedStatement2.executeUpdate();
 
                     preparedStatement3 = connection.prepareStatement(sqlQueryUpdateAccount);
                     preparedStatement3.setBigDecimal(1, amount);
-                    preparedStatement3.setString(2, toCardNumber);
+                    preparedStatement3.setLong(2, toCardNumber);
                     preparedStatement3.executeUpdate();
                 }
                 preparedStatement4 = connection.prepareStatement(sqlQuerySelectBalance);
-                preparedStatement4.setString(1, fromCardNumber);
+                preparedStatement4.setLong(1, fromCardNumber);
 
                 finalResultSet = preparedStatement4.executeQuery();
 
@@ -111,6 +112,9 @@ public class AmountTransferService {
 
             connection.setAutoCommit(true);
             connection.close();
+        }
+        if (finalBalance == null) {
+            throw new SQLException("Check that the information you entered is correct");
         }
         return finalBalance;
     }

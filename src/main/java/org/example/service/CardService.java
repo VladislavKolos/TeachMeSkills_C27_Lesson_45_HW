@@ -5,7 +5,7 @@ import org.example.model.Account;
 import org.example.model.Card;
 import org.example.model.Client;
 import org.example.util.PostgresUtil;
-import org.example.vlidator.GenericValidator;
+import org.example.vlidator.ModelValidator;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -22,10 +22,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardService {
     private final PostgresUtil postgresUtil;
-    private final GenericValidator genericValidator;
+    private final ModelValidator genericValidator;
 
     /**
      * Returns a card by ID.
+     *
      * @param id card ID
      * @return card object
      * @throws SQLException if an error occurred while executing an SQL-query
@@ -50,9 +51,9 @@ public class CardService {
                 if (resultSet.next()) {
                     card = Card.builder()
                             .id(resultSet.getInt("id"))
-                            .cardNumber(resultSet.getString("cardNumber"))
-                            .account(Account.builder().id(resultSet.getInt("accountId")).build())
-                            .client(Client.builder().id(resultSet.getInt("clientId")).build())
+                            .cardNumber(resultSet.getInt("card_number"))
+                            .account(Account.builder().id(resultSet.getInt("account_id")).build())
+                            .client(Client.builder().id(resultSet.getInt("client_id")).build())
                             .build();
                 }
             }
@@ -72,11 +73,15 @@ public class CardService {
                 connection.close();
             }
         }
+        if (card == null) {
+            throw new SQLException("The card does not exist");
+        }
         return card;
     }
 
     /**
      * Returns a list of cards by account ID.
+     *
      * @param accountId account ID
      * @return list of card objects
      * @throws SQLException if an error occurred while executing an SQL-query
@@ -101,9 +106,9 @@ public class CardService {
                 while (resultSet.next()) {
                     Card card = Card.builder()
                             .id(resultSet.getInt("id"))
-                            .cardNumber(resultSet.getString("cardNumber"))
-                            .account(Account.builder().id(resultSet.getInt("accountId")).build())
-                            .client(Client.builder().id(resultSet.getInt("clientId")).build())
+                            .cardNumber(resultSet.getInt("card_number"))
+                            .account(Account.builder().id(resultSet.getInt("account_id")).build())
+                            .client(Client.builder().id(resultSet.getInt("client_id")).build())
                             .build();
                     cards.add(card);
                 }
@@ -125,6 +130,9 @@ public class CardService {
             if (connection != null) {
                 connection.close();
             }
+        }
+        if (cards.isEmpty()) {
+            throw new SQLException("There are no cards");
         }
         return cards;
     }

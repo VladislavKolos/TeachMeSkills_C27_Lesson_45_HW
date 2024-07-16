@@ -1,6 +1,5 @@
 package org.example.controller;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.TransferDTO;
 import org.example.service.AmountTransferService;
@@ -24,19 +23,13 @@ public class TransferController {
     private final AmountTransferService amountTransferService;
 
     @PostMapping
-    public ResponseEntity<String> transferAmount(@Valid @RequestBody TransferDTO transferDTO) throws SQLException {
+    public ResponseEntity<String> transferAmount(@RequestBody TransferDTO transferDTO) throws SQLException {
         BigDecimal remainingBalance = amountTransferService.transferAmount(
                 transferDTO.getFromCardNumber(),
                 transferDTO.getToCardNumber(),
                 transferDTO.getAmount()
         );
-
-        if (remainingBalance != null) {
-            return new ResponseEntity<>("Transfer successful. Remaining balance: "
-                    + remainingBalance, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("Transfer failed",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>("Transfer successful. Remaining balance: "
+                + remainingBalance, HttpStatus.OK);
     }
 }

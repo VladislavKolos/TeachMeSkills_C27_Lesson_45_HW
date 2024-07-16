@@ -1,6 +1,5 @@
 package org.example.dto;
 
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,11 +17,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class TransferDTO {
 
-    @Size(min = 16, max = 16)
-    private String fromCardNumber;
+    private long fromCardNumber;
 
-    @Size(min = 16, max = 16)
-    private String toCardNumber;
+    private long toCardNumber;
 
     private BigDecimal amount;
 }

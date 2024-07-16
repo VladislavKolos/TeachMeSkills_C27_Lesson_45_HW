@@ -3,7 +3,7 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import org.example.model.Client;
 import org.example.util.PostgresUtil;
-import org.example.vlidator.GenericValidator;
+import org.example.vlidator.ModelValidator;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClientService {
     private final PostgresUtil postgresUtil;
-    private final GenericValidator genericValidator;
+    private final ModelValidator genericValidator;
 
     /**
      * Returns the client by its ID.
@@ -72,6 +72,9 @@ public class ClientService {
             }
 
         }
+        if (client == null) {
+            throw new SQLException("The client does not exist");
+        }
         return client;
     }
 
@@ -120,6 +123,9 @@ public class ClientService {
             if (connection != null) {
                 connection.close();
             }
+        }
+        if (clients.isEmpty()) {
+            throw new SQLException("There are no clients");
         }
         return clients;
     }

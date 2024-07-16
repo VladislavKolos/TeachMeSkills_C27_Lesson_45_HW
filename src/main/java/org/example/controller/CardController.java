@@ -26,21 +26,14 @@ public class CardController {
     public ResponseEntity<Card> getCardByID(@PathVariable int id) throws SQLException {
         Card card = cardService.getCardByID(id);
 
-        if (card != null) {
-            return new ResponseEntity<>(card, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(card, HttpStatus.OK);
     }
+
 
     @GetMapping("/accounts/{accountId}")
     public ResponseEntity<List<Card>> getCardsByAccountID(@PathVariable int accountId) throws SQLException {
         List<Card> cards = cardService.getCardsByAccountID(accountId);
 
-        if (cards.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(cards, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(cards, HttpStatus.OK);
     }
 }

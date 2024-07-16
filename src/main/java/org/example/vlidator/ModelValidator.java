@@ -14,7 +14,7 @@ import java.sql.SQLException;
  */
 @Component
 @RequiredArgsConstructor
-public class GenericValidator {
+public class ModelValidator {
     private final PostgresUtil postgresUtil;
 
     /**
@@ -59,7 +59,7 @@ public class GenericValidator {
      * @return true if the card exists, false otherwise
      * @throws SQLException if an error occurred while executing an SQL-query
      */
-    public boolean isCardExistsByCardNumber(String cardNumber) throws SQLException {
+    public boolean isCardExistsByCardNumber(long cardNumber) throws SQLException {
         String sqlQuerySelectCountCard = "SELECT COUNT(*) FROM card WHERE card_number = ?";
 
         return isCardNumberExists(sqlQuerySelectCountCard, cardNumber);
@@ -117,7 +117,7 @@ public class GenericValidator {
      * @return true if the card exists, false otherwise
      * @throws SQLException if an error occurred while executing an SQL-query
      */
-    private boolean isCardNumberExists(String sqlQuery, String cardNumber) throws SQLException {
+    private boolean isCardNumberExists(String sqlQuery, long cardNumber) throws SQLException {
         Connection connection = postgresUtil.getConnection();
 
         PreparedStatement preparedStatement = null;
@@ -127,7 +127,7 @@ public class GenericValidator {
 
         try {
             preparedStatement = connection.prepareStatement(sqlQuery);
-            preparedStatement.setString(1, cardNumber);
+            preparedStatement.setLong(1, cardNumber);
 
             resultSet = preparedStatement.executeQuery();
 

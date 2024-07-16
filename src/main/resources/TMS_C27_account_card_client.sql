@@ -13,7 +13,7 @@ CREATE TABLE account (
 
 CREATE TABLE card (
     id SERIAL PRIMARY KEY,
-    card_number VARCHAR(16) NOT NULL UNIQUE,
+    card_number BIGINT NOT NULL UNIQUE,
     account_id INTEGER REFERENCES account(id),
     client_id INTEGER REFERENCES client(id)
 );

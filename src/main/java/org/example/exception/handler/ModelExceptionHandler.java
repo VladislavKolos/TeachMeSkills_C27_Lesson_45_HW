@@ -35,6 +35,6 @@ public class ModelExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAnotherException(Exception e) {
-        return new ResponseEntity<>("An unknown error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

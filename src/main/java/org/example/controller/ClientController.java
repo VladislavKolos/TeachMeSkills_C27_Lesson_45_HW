@@ -26,21 +26,13 @@ public class ClientController {
     public ResponseEntity<Client> getClientByID(@PathVariable int id) throws SQLException {
         Client client = clientService.getClientByID(id);
 
-        if (client != null) {
-            return new ResponseEntity<>(client, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<>(client, HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<List<Client>> getClients() throws SQLException {
         List<Client> clients = clientService.getClients();
 
-        if (clients.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(clients, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(clients, HttpStatus.OK);
     }
 }

@@ -1,7 +1,9 @@
 package org.example.model;
 
-import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Setter
@@ -12,8 +14,7 @@ import lombok.experimental.SuperBuilder;
 public class Card {
     private int id;
 
-    @Size(min = 16, max = 16)
-    private String cardNumber;
+    private long cardNumber;
 
     private Account account;
 
