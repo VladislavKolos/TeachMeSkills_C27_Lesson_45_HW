@@ -1,4 +1,4 @@
-package org.example.vlidator;
+package org.example.validator;
 
 import lombok.RequiredArgsConstructor;
 import org.example.util.PostgresUtil;
@@ -14,7 +14,7 @@ import java.sql.SQLException;
  */
 @Component
 @RequiredArgsConstructor
-public class ModelValidator {
+public class TransferDTOValidator {
     private final PostgresUtil postgresUtil;
 
     /**

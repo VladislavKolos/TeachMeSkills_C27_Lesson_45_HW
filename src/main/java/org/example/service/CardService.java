@@ -5,7 +5,7 @@ import org.example.model.Account;
 import org.example.model.Card;
 import org.example.model.Client;
 import org.example.util.PostgresUtil;
-import org.example.vlidator.ModelValidator;
+import org.example.validator.TransferDTOValidator;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardService {
     private final PostgresUtil postgresUtil;
-    private final ModelValidator genericValidator;
+    private final TransferDTOValidator genericValidator;
 
     /**
      * Returns a card by ID.

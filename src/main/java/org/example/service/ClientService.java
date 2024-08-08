@@ -3,7 +3,7 @@ package org.example.service;
 import lombok.RequiredArgsConstructor;
 import org.example.model.Client;
 import org.example.util.PostgresUtil;
-import org.example.vlidator.ModelValidator;
+import org.example.validator.TransferDTOValidator;
 import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClientService {
     private final PostgresUtil postgresUtil;
-    private final ModelValidator genericValidator;
+    private final TransferDTOValidator genericValidator;
 
     /**
      * Returns the client by its ID.

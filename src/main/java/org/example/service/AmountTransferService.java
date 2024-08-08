@@ -2,7 +2,6 @@ package org.example.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.util.PostgresUtil;
-import org.example.vlidator.ModelValidator;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,7 +17,6 @@ import java.sql.SQLException;
 @RequiredArgsConstructor
 public class AmountTransferService {
     private final PostgresUtil postgresUtil;
-    private final ModelValidator genericValidator;
 
     /**
      * Transfers the specified amount from one card to another.
@@ -33,52 +31,50 @@ public class AmountTransferService {
         Connection connection = postgresUtil.getConnection();
         connection.setAutoCommit(false);
 
-        PreparedStatement preparedStatement1 = null;
-        PreparedStatement preparedStatement2 = null;
-        PreparedStatement preparedStatement3 = null;
-        PreparedStatement preparedStatement4 = null;
+        PreparedStatement preparedStatementSelectBalanceBeforeTransfer = null;
+        PreparedStatement preparedStatementUpdateFromAccount = null;
+        PreparedStatement preparedStatementUpdateToAccount = null;
+        PreparedStatement preparedStatementSelectBalanceAfterTransfer = null;
         ResultSet resultSet = null;
         ResultSet finalResultSet = null;
 
         BigDecimal finalBalance = null;
 
         String sqlQuerySelectBalance = "SELECT balance FROM account WHERE id = (SELECT account_id FROM card WHERE card_number = ?)";
-        String sqlQueryUpdateAccount = "UPDATE account SET balance = balance - ? WHERE id = (SELECT account_id FROM card  WHERE card_number = ?)";
+        String sqlQueryUpdateFromAccount = "UPDATE account SET balance = balance - ? WHERE id = (SELECT account_id FROM card  WHERE card_number = ?)";
+        String sqlQueryUpdateToAccount = "UPDATE account SET balance = balance + ? WHERE id = (SELECT account_id FROM card  WHERE card_number = ?)";
 
         try {
-            if (genericValidator.isCardExistsByCardNumber(fromCardNumber)
-                    && genericValidator.isCardExistsByCardNumber(toCardNumber)) {
-                preparedStatement1 = connection.prepareStatement(sqlQuerySelectBalance);
-                preparedStatement1.setLong(1, fromCardNumber);
+            preparedStatementSelectBalanceBeforeTransfer = connection.prepareStatement(sqlQuerySelectBalance);
+            preparedStatementSelectBalanceBeforeTransfer.setLong(1, fromCardNumber);
 
-                resultSet = preparedStatement1.executeQuery();
+            resultSet = preparedStatementSelectBalanceBeforeTransfer.executeQuery();
 
-                if (resultSet.next()) {
-                    BigDecimal currentBalance = resultSet.getBigDecimal("balance");
-                    if (currentBalance.compareTo(amount) < 0) {
-                        throw new SQLException("Insufficient funds");
-                    }
-
-                    preparedStatement2 = connection.prepareStatement(sqlQueryUpdateAccount);
-                    preparedStatement2.setBigDecimal(1, amount);
-                    preparedStatement2.setLong(2, fromCardNumber);
-                    preparedStatement2.executeUpdate();
-
-                    preparedStatement3 = connection.prepareStatement(sqlQueryUpdateAccount);
-                    preparedStatement3.setBigDecimal(1, amount);
-                    preparedStatement3.setLong(2, toCardNumber);
-                    preparedStatement3.executeUpdate();
+            if (resultSet.next()) {
+                BigDecimal currentBalance = resultSet.getBigDecimal("balance");
+                if (currentBalance.compareTo(amount) < 0) {
+                    throw new SQLException("Insufficient funds");
                 }
-                preparedStatement4 = connection.prepareStatement(sqlQuerySelectBalance);
-                preparedStatement4.setLong(1, fromCardNumber);
 
-                finalResultSet = preparedStatement4.executeQuery();
+                preparedStatementUpdateFromAccount = connection.prepareStatement(sqlQueryUpdateFromAccount);
+                preparedStatementUpdateFromAccount.setBigDecimal(1, amount);
+                preparedStatementUpdateFromAccount.setLong(2, fromCardNumber);
+                preparedStatementUpdateFromAccount.executeUpdate();
 
-                if (finalResultSet.next()) {
-                    finalBalance = finalResultSet.getBigDecimal("balance");
-                }
-                connection.commit();
+                preparedStatementUpdateToAccount = connection.prepareStatement(sqlQueryUpdateToAccount);
+                preparedStatementUpdateToAccount.setBigDecimal(1, amount);
+                preparedStatementUpdateToAccount.setLong(2, toCardNumber);
+                preparedStatementUpdateToAccount.executeUpdate();
             }
+            preparedStatementSelectBalanceAfterTransfer = connection.prepareStatement(sqlQuerySelectBalance);
+            preparedStatementSelectBalanceAfterTransfer.setLong(1, fromCardNumber);
+
+            finalResultSet = preparedStatementSelectBalanceAfterTransfer.executeQuery();
+
+            if (finalResultSet.next()) {
+                finalBalance = finalResultSet.getBigDecimal("balance");
+            }
+            connection.commit();
 
         } catch (SQLException e) {
             connection.rollback();
@@ -94,20 +90,20 @@ public class AmountTransferService {
                 resultSet.close();
             }
 
-            if (preparedStatement4 != null) {
-                preparedStatement4.close();
+            if (preparedStatementSelectBalanceAfterTransfer != null) {
+                preparedStatementSelectBalanceAfterTransfer.close();
             }
 
-            if (preparedStatement3 != null) {
-                preparedStatement3.close();
+            if (preparedStatementUpdateToAccount != null) {
+                preparedStatementUpdateToAccount.close();
             }
 
-            if (preparedStatement2 != null) {
-                preparedStatement2.close();
+            if (preparedStatementUpdateFromAccount != null) {
+                preparedStatementUpdateFromAccount.close();
             }
 
-            if (preparedStatement1 != null) {
-                preparedStatement1.close();
+            if (preparedStatementSelectBalanceBeforeTransfer != null) {
+                preparedStatementSelectBalanceBeforeTransfer.close();
             }
 
             connection.setAutoCommit(true);
